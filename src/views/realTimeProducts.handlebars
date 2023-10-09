@@ -1,0 +1,50 @@
+<div class="container">
+  <h1 class="text-center">Productos en Tiempo Real</h1>
+  <div id="container">
+    <div>
+      <form id="formulario1" class="form">
+        <label for="addproduct">Ingresar objeto de Producto a agregar</label>
+        <textarea
+          type="text"
+          id="addproduct"
+          name="addproduct"
+          class="form-control"
+          style="height:25%;"
+          placeholder='{
+        "title": "Nombre del producto",
+        "description": "Descripción del producto",
+        "price": 55,
+        "thumbnail": "url_de_la_imagen",
+        "code": "AA-PROD-99",
+        "stock": 5,
+        "status": "disponible",
+        "category": "generico"
+    }'
+        ></textarea>
+        <button type="submit" class="btn btn-primary">Agregar</button>
+
+      </form>
+
+      <form id="formulario2" class="form">
+        <label for="removeproduct">Ingresar ID de Producto a eliminar</label>
+        <input type="text" id="removeproduct" />
+        <button
+          type="submit"
+          value="Eliminar"
+          class="btn btn-primary"
+        >Eliminar</button>
+      </form>
+    </div>
+    <div id="products-container" class="container-products">
+
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+  crossorigin="anonymous"
+></script>
