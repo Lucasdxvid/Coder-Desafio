@@ -5,11 +5,9 @@ import path from "node:path";
 
 const router = Router();
 
-// Ruta del archivo de productos.
 const productsFilePath = path.join(__dirname, "./files/products.json");
 const productManager = new ProductManager(productsFilePath);
 
-// Obtener todos los productos o un número limitado de productos.
 router.get("/", async (req, res) => {
   try {
     const products = await productManager.getProducts();
@@ -18,7 +16,7 @@ router.get("/", async (req, res) => {
     if (!cant) return res.send(products);
 
     if (isNaN(cant))
-      return res.status(400).send({ error: "Ingrese un número válido" });
+      return res.status(404).send({ error: "ingrese un numero" });
 
     const filteredProducts = products.slice(0, cant);
     res.send(filteredProducts);
@@ -27,7 +25,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Obtener un producto por su ID.
 router.get("/:pid", async (req, res) => {
   try {
     const id = Number(req.params.pid);
@@ -38,13 +35,13 @@ router.get("/:pid", async (req, res) => {
   }
 });
 
-// Agregar un nuevo producto.
 router.post("/", async (req, res) => {
   try {
     const product = req.body;
     await productManager.addProduct(product);
-    res.status(201).send({ status: "success", payload: product });
-    //socket io
+    res.status(200).send({ status: "success", payload: product });
+
+    //nuevo código para el desafio10
     const io = req.app.get("socketio");
     io.emit("showProducts", await productManager.getProducts());
   } catch (error) {
@@ -52,7 +49,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Actualizar un producto por su ID.
 router.put("/:pid", async (req, res) => {
   try {
     const product = req.body;
@@ -68,7 +64,6 @@ router.put("/:pid", async (req, res) => {
   }
 });
 
-// Eliminar un producto por su ID.
 router.delete("/:pid", async (req, res) => {
   try {
     const id = Number(req.params.pid);
@@ -76,7 +71,7 @@ router.delete("/:pid", async (req, res) => {
 
     res.status(200).send({ status: "success" });
 
-    //socket io
+    //nuevo código para el desafio10
     const io = req.app.get("socketio");
     io.emit("showProducts", await productManager.getProducts());
   } catch (error) {

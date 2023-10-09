@@ -4,28 +4,34 @@ import { __dirname } from "./utils.js";
 import { Server } from "socket.io";
 import productsRouter from "./routes/products.router.js";
 import viewsRouter from "./routes/views.router.js";
-
 import ProductManager from "./managers/ProductManagers.js";
 import path from "node:path";
+
 const productsFilePath = path.join(__dirname, "./files/products.json");
 const productManager = new ProductManager(productsFilePath);
 
+//Configuracion de Express
 const app = express();
 app.use(express.static(__dirname + "/public"));
 
+// Habilitar el manejo de solicitudes JSON y datos codificados en URL.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Configuracion de handlebars
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
 
+//Views de handlebars
 app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 
 const server = app.listen(8080, () =>
   console.log("Listening server on port 8080")
 );
+
+// Iniciar el servidor con Sockets y escuchar en el puerto 8080.
 
 const io = new Server(server);
 

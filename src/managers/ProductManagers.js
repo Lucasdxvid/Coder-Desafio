@@ -1,3 +1,5 @@
+// Importamos el módulo 'fs' (file system) para realizar operaciones de lectura y escritura de archivos.
+
 import fs from "fs";
 
 class ProductManager {
@@ -5,6 +7,7 @@ class ProductManager {
     this.path = path;
   }
 
+  // Obtener todos los productos desde el archivo JSON.
   getProducts = async () => {
     try {
       if (fs.existsSync(this.path)) {
@@ -20,16 +23,19 @@ class ProductManager {
     }
   };
 
+  // Añadir un nuevo producto al archivo JSON.
   addProduct = async (product) => {
     try {
       const allProducts = await this.getProducts();
 
+      // Verificar si el código del producto ya existe.
       if (allProducts.some((p) => p.code === product.code)) {
         throw new Error(
-          "You cannot add the product because a product with the same code already exists"
+          "El código ya está en uso por otro producto (Intenta ingresar otro código)."
         );
       }
 
+      // Verificar que todos los campos obligatorios estén presentes.
       if (
         !product.title ||
         !product.description ||
@@ -39,12 +45,18 @@ class ProductManager {
         !product.stock ||
         !product.category
       ) {
-        throw new Error("All fields are required to add a product.");
+        throw new Error(
+          "Todos los campos son obligatorios para añadir un nuevo producto."
+        );
       }
+
+      // Asignar un ID único al nuevo producto.
       product.id =
         allProducts.length === 0
           ? 1
           : allProducts[allProducts.length - 1].id + 1;
+
+      // Agregar el producto a la lista y guardarla en el archivo JSON.
       allProducts.push(product);
       await fs.promises.writeFile(
         this.path,
@@ -57,13 +69,15 @@ class ProductManager {
     }
   };
 
+  // Obtener un producto por su ID.
   getProductById = async (id) => {
     try {
       const allProducts = await this.getProducts();
       const productById = allProducts.find((p) => p.id === id);
 
+      // Verificar si el producto con la ID especificada existe.
       if (!productById) {
-        throw new Error("There is no product with the ID entered");
+        throw new Error("No existe un producto con la ID ingresada.");
       }
       return productById;
     } catch (error) {
@@ -72,17 +86,21 @@ class ProductManager {
     }
   };
 
+  // Actualizar un producto por su ID.
   updateProduct = async (id, product) => {
     try {
       const allProducts = await this.getProducts();
       const productIndex = allProducts.findIndex((p) => p.id === id);
 
+      // Verificar si la ID del producto a actualizar existe.
       if (productIndex != -1) {
+        // Verificar si el código del producto a actualizar ya existe en otro producto.
         if (allProducts.some((p) => p.code === product.code)) {
           throw new Error(
-            "You cannot update a product code with an existing one"
+            "No se puede actualizar un código de producto con uno existente."
           );
         } else {
+          // Actualizar los campos del producto y guardar la lista actualizada en el archivo JSON.
           allProducts[productIndex] = {
             title: product.title || allProducts[productIndex].title,
             description:
@@ -103,7 +121,7 @@ class ProductManager {
         }
       } else {
         throw new Error(
-          "The ID of the product you are trying to update does not exist."
+          "El ID del producto que estás intentando actualizar no existe (Intenta colocar un ID existente)."
         );
       }
     } catch (error) {
@@ -112,12 +130,15 @@ class ProductManager {
     }
   };
 
+  // Eliminar un producto por su ID.
   deleteProduct = async (id) => {
     try {
       const allProducts = await this.getProducts();
       const productIndex = allProducts.findIndex((p) => p.id === id);
 
+      // Verificar si la ID del producto a eliminar existe.
       if (productIndex != -1) {
+        // Eliminar el producto de la lista y guardar la lista actualizada en el archivo JSON.
         allProducts.splice(productIndex, 1);
         await fs.promises.writeFile(
           this.path,
@@ -125,7 +146,7 @@ class ProductManager {
         );
       } else {
         throw new Error(
-          "The ID of the product you are trying to delete does not exist."
+          "La ID del producto que quieres eliminar no existe o ya fue borrado (Intenta probar con un producto existente)."
         );
       }
     } catch (error) {
